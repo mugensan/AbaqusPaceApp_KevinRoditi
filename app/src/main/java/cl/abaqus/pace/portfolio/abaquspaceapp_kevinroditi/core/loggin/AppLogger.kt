@@ -1,4 +1,6 @@
 package cl.abaqus.pace.portfolio.abaquspaceapp_kevinroditi.core.loggin
 
-class AppLogger {
+interface AppLogger {
+    fun d(message: String)
+    fun e(message: String, throwable: Throwable? = null)
 }
