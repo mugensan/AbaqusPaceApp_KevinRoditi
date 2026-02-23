@@ -39,6 +39,7 @@ android {
     
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.3" // Added composeOptions
@@ -61,6 +62,9 @@ dependencies {
     implementation("androidx.compose.ui:ui:1.5.3")
     implementation("androidx.compose.material3:material3:1.2.1")
     implementation("androidx.compose.ui:ui-tooling-preview:1.5.3")
+    implementation(libs.androidx.room.common.jvm)
+    implementation(libs.androidx.room.compiler)
+    implementation(libs.androidx.core.animation)
 
     // Original Test Dependencies
     testImplementation(libs.junit)
