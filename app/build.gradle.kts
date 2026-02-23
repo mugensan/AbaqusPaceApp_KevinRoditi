@@ -19,7 +19,12 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // Securely store API token
-        buildConfigField("String", "API_TOKEN", "\"YOUR_REAL_API_TOKEN\"")
+        defaultConfig{
+            val apiToken:String =
+                project.findProperty("API_TOKEN") as String?
+                    ?: throw GradleException("API_TOKEN is missing in gradle.properties")
+            buildConfigField("String", "API_TOKEN", "\"${apiToken}\"")
+        }
     }
 
     buildTypes {
@@ -93,6 +98,7 @@ dependencies {
     // Retrofit / OkHttp / Moshi
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
 
