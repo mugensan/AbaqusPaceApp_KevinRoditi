@@ -16,24 +16,8 @@ interface PositionDao {
     suspend fun insertPositions(positions: List<PositionEntity>)
 
     @Query("DELETE FROM positions")
-    suspend fun clearPositions()
+    suspend fun deleteAll()
 
-    @Query(
-        """
-        SELECT * FROM positions
-        WHERE symbol LIKE '%' || :query || '%'
-        OR name LIKE '%' || :query || '%'
-    """
-    )
-
+    @Query("SELECT * FROM positions WHERE symbol LIKE '%' || :query || '%' OR name LIKE '%' || :query || '%'")
     fun searchPositions(query: String): Flow<List<PositionEntity>>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(list: List<PositionEntity>)
-
-    @Query("UPDATE positions SET isFavorite =NOT isFavorite WHERE symbol = :symbol")
-    suspend fun toggleFavorite(symbol: String)
-
-    @Query("DELETE FROM positions ")
-    suspend fun clearAll()
 }
