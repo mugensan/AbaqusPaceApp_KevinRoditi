@@ -1,6 +1,7 @@
 package cl.abaqus.pace.portfolio.abaquspaceapp_kevinroditi.di
 
 import cl.abaqus.pace.portfolio.abaquspaceapp_kevinroditi.BuildConfig
+import cl.abaqus.pace.portfolio.abaquspaceapp_kevinroditi.data.remote.adapter.BigDecimalAdapter
 import cl.abaqus.pace.portfolio.abaquspaceapp_kevinroditi.data.remote.api.PaceApi
 import cl.abaqus.pace.portfolio.abaquspaceapp_kevinroditi.data.remote.interceptor.AuthInterceptor
 import com.squareup.moshi.Moshi
@@ -46,6 +47,7 @@ object NetworkModule {
     @Singleton
     fun provideMoshi(): Moshi {
         return Moshi.Builder()
+            .add(BigDecimalAdapter())
             .add(KotlinJsonAdapterFactory())
             .build()
     }

@@ -20,7 +20,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
         buildConfigField("String", "API_BASE_URL", "\"https://api.test.pace.abaqus.cl/\"")
-        buildConfigField("String", "API_TOKEN", "\"dummy_token_for_now\"")
+        buildConfigField("String", "API_TOKEN", "\"d6azb07aze40dd8zdd0077773799583b876291bbe\"")
     }
 
     buildTypes {
@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation("androidx.compose.material:material-icons-extended")
     
     // Biometric
     implementation(libs.androidx.biometric)

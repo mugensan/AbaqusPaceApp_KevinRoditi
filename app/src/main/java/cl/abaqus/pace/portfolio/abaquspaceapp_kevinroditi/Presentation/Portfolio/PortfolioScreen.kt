@@ -8,8 +8,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,8 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,34 +32,30 @@ import java.util.*
 
 @Composable
 fun PortfolioScreen(
-    viewModel: PortfolioViewModel = hiltViewModel()
+    viewModel: PortfolioViewModel = hiltViewModel(),
+    onNavigateToSearch: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Scaffold(
-        bottomBar = { PortfolioBottomNavigation() },
-        containerColor = Color(0xFF121212)
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            PortfolioTopBar()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF121212))
+    ) {
+        PortfolioTopBar()
 
-            when (val s = state) {
-                is PortfolioUiState.Loading -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = Color.White)
-                    }
+        when (val s = state) {
+            is PortfolioUiState.Loading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = Color(0xFFADFF2F))
                 }
-                is PortfolioUiState.Success -> {
-                    PortfolioContent(s.portfolio, s.positions)
-                }
-                is PortfolioUiState.Error -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(text = s.message, color = Color.Red)
-                    }
+            }
+            is PortfolioUiState.Success -> {
+                PortfolioContent(s.portfolio, s.positions)
+            }
+            is PortfolioUiState.Error -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = s.message, color = Color.Red, modifier = Modifier.padding(16.dp))
                 }
             }
         }
@@ -109,22 +105,43 @@ fun PortfolioContent(portfolio: Portfolio?, positions: List<Position>) {
             Spacer(modifier = Modifier.height(24.dp))
             BuyingPowerSection(portfolio)
             Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                text = "Posiciones",
-                color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Posiciones",
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "VALOR DEL DÍA ⌄",
+                    color = Color.Gray,
+                    fontSize = 12.sp
+                )
+            }
             Spacer(modifier = Modifier.height(16.dp))
         }
-        items(positions) { position ->
-            PositionItem(position)
-            HorizontalDivider(
-                color = Color.DarkGray,
-                thickness = 0.5.dp,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+        
+        if (positions.isEmpty()) {
+            item {
+                Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
+                    Text(text = "No hay posiciones disponibles", color = Color.Gray)
+                }
+            }
+        } else {
+            items(positions) { position ->
+                PositionItem(position)
+                HorizontalDivider(
+                    color = Color.DarkGray,
+                    thickness = 0.5.dp,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
         }
     }
 }
@@ -144,11 +161,15 @@ fun PortfolioSummary(portfolio: Portfolio?) {
             fontWeight = FontWeight.Bold
         )
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "▲", color = Color(0xFFADFF2F), fontSize = 12.sp)
+            val performance = portfolio?.performancePercentage ?: BigDecimal.ZERO
+            val color = if (performance >= BigDecimal.ZERO) Color(0xFFADFF2F) else Color.Red
+            val symbol = if (performance >= BigDecimal.ZERO) "▲" else "▼"
+            
+            Text(text = symbol, color = color, fontSize = 12.sp)
             Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = "$7.06 (0,04%) Hoy",
-                color = Color(0xFFADFF2F),
+                text = "$7.06 (${performance.format()}%) Hoy",
+                color = color,
                 fontSize = 14.sp
             )
         }
@@ -228,7 +249,7 @@ fun BuyingPowerSection(portfolio: Portfolio?) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = "PESO CHILENO", color = Color.Gray, fontSize = 12.sp)
                 Text(
-                    text = "$42.788,54", // Placeholder as per design
+                    text = "$42.788,54", 
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
@@ -264,18 +285,32 @@ fun PositionItem(position: Position) {
     }
 }
 
+data class BottomNavItem(val label: String, val icon: ImageVector)
+
 @Composable
-fun PortfolioBottomNavigation() {
+fun PortfolioBottomNavigation(
+    currentScreen: String,
+    onItemSelected: (String) -> Unit
+) {
+    val items = listOf(
+        BottomNavItem("Trade", Icons.Default.AutoGraph),
+        BottomNavItem("Wallet", Icons.Default.AccountBalanceWallet),
+        BottomNavItem("Buscar", Icons.Default.Search),
+        BottomNavItem("Mensajes", Icons.Default.ChatBubbleOutline),
+        BottomNavItem("Cuenta", Icons.Default.PersonOutline)
+    )
+
     NavigationBar(
         containerColor = Color(0xFF1E1E1E),
-        contentColor = Color.White
+        contentColor = Color.White,
+        tonalElevation = 0.dp
     ) {
-        listOf("Trade", "Wallet", "Buscar", "Mensajes", "Cuenta").forEach { item ->
+        items.forEach { item ->
             NavigationBarItem(
-                selected = item == "Wallet",
-                onClick = { },
-                icon = { Icon(Icons.Default.Star, contentDescription = null) },
-                label = { Text(item, fontSize = 10.sp) },
+                selected = item.label == currentScreen,
+                onClick = { onItemSelected(item.label) },
+                icon = { Icon(item.icon, contentDescription = item.label) },
+                label = { Text(item.label, fontSize = 10.sp) },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = Color(0xFFADFF2F),
                     unselectedIconColor = Color.Gray,

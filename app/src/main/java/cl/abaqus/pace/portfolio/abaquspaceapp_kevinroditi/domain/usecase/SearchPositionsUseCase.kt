@@ -1,4 +1,4 @@
-package cl.abaqus.pace.portfolio.abaquspaceapp_kevinroditi.domain.use_case
+package cl.abaqus.pace.portfolio.abaquspaceapp_kevinroditi.domain.usecase
 
 import cl.abaqus.pace.portfolio.abaquspaceapp_kevinroditi.domain.model.Position
 import cl.abaqus.pace.portfolio.abaquspaceapp_kevinroditi.domain.repository.PortfolioRepository
