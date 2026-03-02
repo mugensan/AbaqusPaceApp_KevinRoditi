@@ -1,9 +1,7 @@
 ﻿<table>
   <tr>
-    <td><img src="![Screenshot_20260302_164349_AbaqusPaceApp_KevinRoditi](https://github.com/user-attachments/assets/bd843494-385c-4152-8f6b-96a8b48791ec)
-" width="100%"></td>
-    <td><img src="![Screenshot_20260302_164354_AbaqusPaceApp_KevinRoditi](https://github.com/user-attachments/assets/794dfba8-6d34-47a6-a45e-2733d8d61bb7)
-" width="100%"></td>
+    <td><img src="https://github.com/user-attachments/assets/bd843494-385c-4152-8f6b-96a8b48791ec" width="100%"></td>
+    <td><img src="https://github.com/user-attachments/assets/794dfba8-6d34-47a6-a45e-2733d8d61bb7" width="100%"></td>
   </tr>
 </table>
 
@@ -107,17 +105,14 @@ GET /portfolios/positions/?currency=USD
 
 UI state is handled using:
 
-```
-StateFlow
-```
-
-With a sealed class wrapper:
-
 ```kotlin
-sealed class Resource<T> {
-    data class Success<T>(val data: T) : Resource<T>()
-    data class Error<T>(val message: String) : Resource<T>()
-    data class Loading<T> : Resource<T>()
+sealed interface PortfolioUiState {
+    object Loading : PortfolioUiState
+    data class Success(
+        val portfolio: Portfolio? = null,
+        val positions: List<Position> = emptyList()
+    ) : PortfolioUiState
+    data class Error(val message: String) : PortfolioUiState
 }
 ```
 
@@ -131,25 +126,17 @@ sealed class Resource<T> {
 git clone <repository-url>
 ```
 
-### 2️⃣ Switch to the development branch
-
-⚠️ **Important:** The latest stable implementation lives in the `dev` branch.
-
-```bash
-git checkout dev
-```
-
-### 3️⃣ Open in Android Studio
+### 2️⃣ Open in Android Studio
 
 - Open Android Studio
 - Select "Open"
 - Choose the project folder
 
-### 4️⃣ Sync Gradle
+### 3️⃣ Sync Gradle
 
 Wait for Gradle to finish syncing dependencies.
 
-### 5️⃣ Run the application
+### 4️⃣ Run the application
 
 - Select a device or emulator
 - Click **Run**
@@ -166,8 +153,6 @@ The project follows milestone-based commits:
 - `feat: implement domain use cases and repository contracts`
 - `feat: implement portfolio feature with compose and stateflow`
 
-Each milestone represents a clean architectural layer completion.
-
 ---
 
 ## 🧪 Testability
@@ -175,7 +160,7 @@ Each milestone represents a clean architectural layer completion.
 The architecture allows:
 
 - Unit testing of UseCases
-- Repository mocking
+- Repository mocking (MockPortfolioRepositoryImpl included)
 - ViewModel testing
 - Clear dependency injection boundaries
 
@@ -183,18 +168,16 @@ The architecture allows:
 
 ## 📌 Senior-Level Considerations
 
-- No tight coupling between layers
-- No Android imports in domain layer
-- DTOs never leak into UI
-- Clear mapping responsibilities
-- Modular-ready structure
-- Production-ready scalability
+- **Robust Auth**: Senior `AuthInterceptor` handling `Token` and `Bearer` schemes + user association.
+- **Mocking Strategy**: Integrated Mock Repository for seamless UI development.
+- **Dynamic UI**: Shared navigation and centered titles across all views.
+- **Clean Architecture**: Strict separation of concerns and consolidated use cases.
 
 ---
 
 # WealthApp – Proyecto Android Clean Architecture Nivel Senior
 
-👉 **English Version:** [Go to English Version](#wealthapp--senior-android-clean-architecture-project)
+👉 **English Version:** [Go to English Version](#abaquspaceapp_kevinroditi)
 
 ---
 
@@ -211,8 +194,6 @@ El proyecto sigue los principios de **Clean Architecture** con **MVVM**, desarro
 - StateFlow (Gestión de estado)
 - Material 3
 
-Este proyecto demuestra prácticas de desarrollo Android de nivel senior, adecuadas para entrevistas técnicas y entornos productivos reales.
-
 ---
 
 ## 🏗 Arquitectura
@@ -227,73 +208,11 @@ core → Utilidades y configuración de red
 di → Módulos de inyección de dependencias
 ```
 
-### Principios Aplicados
-
-- Principio de Responsabilidad Única (SRP)
-- Principio de Inversión de Dependencias (DIP)
-- Patrón Repository
-- Patrón UseCase
-- Mapeo DTO → Dominio → Entidad
-- Sin dependencias Android en la capa domain
-- Sin exposición de DTOs fuera de data
-- Estado inmutable usando StateFlow
-
----
-
-## 🧰 Stack Tecnológico
-
-- Kotlin
-- Jetpack Compose
-- MVVM
-- Hilt
-- Retrofit
-- Moshi
-- OkHttp Logging
-- Room
-- Coroutines
-- Flow / StateFlow
-- Material 3
-
----
-
-## 🚀 Cómo Ejecutar el Proyecto
-
-### 1️⃣ Clonar el repositorio
-
-```bash
-git clone <repository-url>
-```
-
-### 2️⃣ Cambiar a la rama de desarrollo
-
-⚠️ **Importante:** La implementación estable más reciente se encuentra en la rama `dev`.
-
-```bash
-git checkout dev
-```
-
-### 3️⃣ Abrir en Android Studio
-
-- Abrir Android Studio
-- Seleccionar "Open"
-- Elegir la carpeta del proyecto
-
-### 4️⃣ Sincronizar Gradle
-
-Esperar a que finalice la sincronización.
-
-### 5️⃣ Ejecutar la aplicación
-
-- Seleccionar dispositivo o emulador
-- Presionar **Run**
-
 ---
 
 ## 📌 Consideraciones Nivel Senior
 
-- Separación clara de capas
-- Código escalable
-- Preparado para testing
-- Estructura modularizable
-- Arquitectura lista para producción
-
+- **Autenticación Robusta**: `AuthInterceptor` de nivel senior que maneja esquemas `Token` y `Bearer`.
+- **Estrategia de Mocking**: Repositorio Mock integrado para desarrollo ágil de UI.
+- **Interfaz Dinámica**: Navegación compartida y títulos centrados en todas las vistas.
+- **Código Escalable**: Arquitectura lista para producción y preparada para testing.
