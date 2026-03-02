@@ -1,4 +1,7 @@
 package cl.abaqus.pace.portfolio.abaquspaceapp_kevinroditi.data.remote.dto
 
-class PerformanceDto {
-}
+import java.math.BigDecimal
+
+data class PerformanceDto(
+    val performance: BigDecimal
+)

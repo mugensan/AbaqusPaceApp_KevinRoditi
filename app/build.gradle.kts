@@ -1,30 +1,25 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlinAndroid)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.pace.app" // Updated namespace
-    compileSdk = 34
+    namespace = "com.example.wealthapp"
+    compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.pace.app" // Updated application ID
-        minSdk = 33 // Updated minSdk
-        targetSdk = 34
+        applicationId = "com.example.wealthapp"
+        minSdk = 26
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        // Securely store API token
-        defaultConfig{
-            val apiToken:String =
-                project.findProperty("API_TOKEN") as String?
-                    ?: throw GradleException("API_TOKEN is missing in gradle.properties")
-            buildConfigField("String", "API_TOKEN", "\"${apiToken}\"")
-        }
+        
+        buildConfigField("String", "API_BASE_URL", "\"https://api.test.pace.abaqus.cl/\"")
     }
 
     buildTypes {
@@ -37,82 +32,58 @@ android {
         }
     }
     compileOptions {
-        // Updated to Java 1.8 for compatibility with some of the libraries
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
-    
     buildFeatures {
         compose = true
         buildConfig = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3" // Added composeOptions
-    }
     packagingOptions {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}" // Added packagingOptions
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
 }
 
 dependencies {
-    // Original dependencies
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    
+    // Biometric
+    implementation(libs.androidx.biometric)
 
-    // Jetpack Compose (New versions)
-    implementation("androidx.compose.ui:ui:1.5.3")
-    implementation("androidx.compose.material3:material3:1.2.1")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.5.3")
-    implementation(libs.androidx.room.common.jvm)
-    implementation(libs.androidx.room.compiler)
-    implementation(libs.androidx.core.animation)
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
-    // Original Test Dependencies
+    // Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    // Networking
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.moshi)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
+    implementation(libs.moshi)
+
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.android)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-
-    // New Test & Debug Dependencies
-    debugImplementation("androidx.compose.ui:ui-tooling:1.5.3")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.3")
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-    // Kotlin Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-
-    // Lifecycle / ViewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
-
-    // Hilt DI (New versions and navigation-compose)
-    implementation("com.google.dagger:hilt-android:2.47")
-    ksp("com.google.dagger:hilt-compiler:2.47")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
-
-    // Retrofit / OkHttp / Moshi
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
-    implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
-    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
-    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
-
-    // Timber logging
-    implementation("com.jakewharton.timber:timber:5.0.1")
-
-    // Room (New versions)
-    implementation("androidx.room:room-runtime:2.6.2")
-    ksp("androidx.room:room-compiler:2.6.2")
-    implementation("androidx.room:room-ktx:2.6.2")
-
-    // Unit Testing
-    testImplementation("org.mockito:mockito-core:5.5.0")
-    testImplementation("org.robolectric:4.11.2") // Note: The version was 4.11.2, you had 4.11.2
-    testImplementation("androidx.arch.core:core-testing:2.2.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }
