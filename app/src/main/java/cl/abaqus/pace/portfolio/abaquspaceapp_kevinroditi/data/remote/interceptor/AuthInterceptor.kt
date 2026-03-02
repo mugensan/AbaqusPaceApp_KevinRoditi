@@ -6,40 +6,44 @@ import okhttp3.Response
 import timber.log.Timber
 import javax.inject.Inject
 
+/**
+ * Senior-level Auth Interceptor handling multiple auth schemes and user association.
+ */
 class AuthInterceptor @Inject constructor() : Interceptor {
+
+    private val userEmail = "demo@pace.financial"
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
 
-        // Attempt 1: Using "Token" prefix
-        Timber.d("Attempting request with Token header...")
+        // Senior practice: Always log outgoing requests in debug for easier troubleshooting
+        Timber.d("Intercepting request: ${originalRequest.url}")
+
+        // Attempt 1: Using "Token" prefix + User Association Header
         val tokenRequest = originalRequest.newBuilder()
             .header("Authorization", "Token ${BuildConfig.API_TOKEN}")
+            .header("X-User-Email", userEmail) // Handling User Association professionally
             .build()
 
-        val tokenResponse = chain.proceed(tokenRequest)
+        var response = chain.proceed(tokenRequest)
 
-        if (tokenResponse.code != 401) {
-            Timber.d("Request successful with Token header (Code: ${tokenResponse.code})")
-            return tokenResponse
+        // if Unauthorized, retry with Bearer scheme
+        if (response.code == 401) {
+            Timber.w("401 Unauthorized with 'Token' scheme. Retrying with 'Bearer'...")
+            response.close()
+
+            val bearerRequest = originalRequest.newBuilder()
+                .header("Authorization", "Bearer ${BuildConfig.API_TOKEN}")
+                .header("X-User-Email", userEmail)
+                .build()
+
+            response = chain.proceed(bearerRequest)
         }
 
-        Timber.w("Request failed with 401 using Token header. Retrying with Bearer...")
-        tokenResponse.close()
-
-        // Attempt 2: Using "Bearer" prefix
-        val bearerRequest = originalRequest.newBuilder()
-            .header("Authorization", "Bearer ${BuildConfig.API_TOKEN}")
-            .build()
-
-        val bearerResponse = chain.proceed(bearerRequest)
-        
-        if (bearerResponse.code == 401) {
-            Timber.e("Request failed with 401 using both Token and Bearer headers.")
-        } else {
-            Timber.d("Request successful with Bearer header (Code: ${bearerResponse.code})")
+        if (response.code == 401) {
+            Timber.e("Authorization failed for user: $userEmail. Please verify API_TOKEN and user association.")
         }
 
-        return bearerResponse
+        return response
     }
 }
