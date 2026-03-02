@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.wealthapp"
+    namespace = "cl.abaqus.pace.portfolio.abaquspaceapp_kevinroditi"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.wealthapp"
+        applicationId = "cl.abaqus.pace.portfolio.abaquspaceapp_kevinroditi"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
@@ -20,6 +20,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
         buildConfigField("String", "API_BASE_URL", "\"https://api.test.pace.abaqus.cl/\"")
+        buildConfigField("String", "API_TOKEN", "\"dummy_token_for_now\"")
     }
 
     buildTypes {
@@ -32,8 +33,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -43,6 +47,13 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        // Force all kotlin-reflect usages to the same version to fix corrupted cache issues
+        force("org.jetbrains.kotlin:kotlin-reflect:2.1.10")
     }
 }
 
@@ -62,7 +73,7 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
 
     // Room
     implementation(libs.androidx.room.runtime)
@@ -80,7 +91,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     
     // Logging
-    implementation(libs.timber.real)
+    implementation(libs.timber)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

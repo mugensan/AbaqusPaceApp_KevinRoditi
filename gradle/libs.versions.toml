@@ -1,5 +1,5 @@
 [versions]
-agp = "8.6.1"
+agp = "8.7.3"
 kotlin = "2.0.21"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -46,8 +46,7 @@ moshi = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshi" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
-timber = { module = "com.squareup.logcat:logcat", version = "0.1.0" } # Actually Timber is better
-timber-real = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

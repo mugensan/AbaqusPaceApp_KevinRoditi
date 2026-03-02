@@ -6,7 +6,6 @@ import cl.abaqus.pace.portfolio.abaquspaceapp_kevinroditi.domain.model.Portfolio
 import cl.abaqus.pace.portfolio.abaquspaceapp_kevinroditi.domain.repository.PortfolioRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import java.math.BigDecimal
 import javax.inject.Inject
 
 /**
@@ -30,31 +29,18 @@ class GetPortfolioUseCase @Inject constructor(
                 val returnsResult = returnsDeferred.await()
                 val positionsResult = positionsDeferred.await()
 
-                val results = listOf(
-                    valueResult,
-                    performanceResult,
-                    cashBalanceResult,
-                    returnsResult,
-                    positionsResult
-                )
-
-                val firstFailure = results.firstOrNull { it is DomainResult.Failure }
-                if (firstFailure != null) {
-                    return@coroutineScope firstFailure as DomainResult.Failure
-                }
-
-                // Safely extract data, assuming some inconsistencies in repository return types
-                val totalValue = (valueResult as DomainResult.Success).data.totalValue
-                val performanceMap = (performanceResult as DomainResult.Success)
-                    .data as Map<String, String>
-                val performanceYtd = BigDecimal(performanceMap["performanceYdt"] ?: "0.0")
+                if (valueResult is DomainResult.Failure) return@coroutineScope valueResult
+                if (performanceResult is DomainResult.Failure) return@coroutineScope performanceResult
+                if (cashBalanceResult is DomainResult.Failure) return@coroutineScope cashBalanceResult
+                if (returnsResult is DomainResult.Failure) return@coroutineScope returnsResult
+                if (positionsResult is DomainResult.Failure) return@coroutineScope positionsResult
 
                 DomainResult.Success(
                     Portfolio(
-                        totalValue = totalValue,
-                        performanceYdt = performanceYtd,
+                        totalValue = (valueResult as DomainResult.Success).data.totalValue,
+                        performancePercentage = (performanceResult as DomainResult.Success).data,
                         cashBalance = (cashBalanceResult as DomainResult.Success).data,
-                        returnsYdt = (returnsResult as DomainResult.Success).data,
+                        returnsYtd = (returnsResult as DomainResult.Success).data,
                         positions = (positionsResult as DomainResult.Success).data
                     )
                 )

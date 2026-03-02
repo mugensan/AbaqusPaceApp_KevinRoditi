@@ -6,7 +6,8 @@ import java.math.BigDecimal
 
 @Entity(tableName = "positions")
 data class PositionEntity(
-    @PrimaryKey val symbol: String,
+    @PrimaryKey
+    val symbol: String,
     val name: String,
     val quantity: BigDecimal,
     val price: BigDecimal,

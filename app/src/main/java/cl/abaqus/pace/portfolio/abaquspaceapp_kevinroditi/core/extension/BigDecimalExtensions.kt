@@ -1,9 +1,9 @@
 package cl.abaqus.pace.portfolio.abaquspaceapp_kevinroditi.core.extension
 
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.text.NumberFormat
 import java.util.Locale
-import java.util.RoundingMode
 
 /**
  * Formatting BigDecimal as currency String (USD)
@@ -16,8 +16,8 @@ fun BigDecimal.formatAsCurrency(): String {
 /**
  * Formatting BigDecimal as percentage String with 2 decimal
  */
-fun BigDecimal.toPercentageString(): String{
-    return "%,2f%%".format(this)
+fun BigDecimal.toPercentageString(): String {
+    return "%.2f%%".format(this.setScale(2, RoundingMode.HALF_UP))
 }
 
 fun Double.toBigDecimalSafe(): BigDecimal =

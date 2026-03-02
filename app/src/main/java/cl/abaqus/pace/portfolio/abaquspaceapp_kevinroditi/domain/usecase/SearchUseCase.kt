@@ -6,10 +6,8 @@ import javax.inject.Inject
 /**
  * Use case to search assets by name or symbol
  */
-
 class SearchUseCase @Inject constructor(
     private val repository: PortfolioRepository
-){
-    suspend operator fun invoke(query: String) = repository.searchAssets(query)
-
+) {
+    operator fun invoke(query: String) = repository.searchPositions(query)
 }
