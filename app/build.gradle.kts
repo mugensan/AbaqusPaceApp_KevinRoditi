@@ -78,6 +78,9 @@ dependencies {
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
+    
+    // Logging
+    implementation(libs.timber.real)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

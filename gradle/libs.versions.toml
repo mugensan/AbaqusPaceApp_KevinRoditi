@@ -16,6 +16,7 @@ okhttp = "4.12.0"
 moshi = "1.15.1"
 coroutines = "1.9.0"
 biometric = "1.2.0-alpha05"
+timber = "5.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,6 +46,8 @@ moshi = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshi" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
+timber = { module = "com.squareup.logcat:logcat", version = "0.1.0" } # Actually Timber is better
+timber-real = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
